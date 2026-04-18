@@ -1,0 +1,24 @@
+Summary of the python.app Issue (in English)
+The problem happened because the original environment.yml included a package called python.app.
+This package is macOS‑only and does not exist on Windows.
+
+When the Gatekeeper (working on Windows) tried to recreate the environment, Conda failed with:
+
+Code
+PackagesNotFoundError: The following packages are not available:
+  - python.app
+This error means:
+
+The Developer exported the environment from a macOS machine
+
+The export included OS‑specific packages
+
+Windows cannot install them
+
+Therefore, the Gatekeeper cannot reproduce the environment
+
+The correct fix was to regenerate the environment file using:
+
+Code
+conda env export --from-history > environment.yml
+This command exports only the packages the Developer explicitly installed, avoiding OS‑specific dependencies like python.app.
